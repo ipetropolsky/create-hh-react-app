@@ -11,7 +11,7 @@ const IndexPage = () => {
 
     return (
         <>
-            <h1>Index page</h1>
+            <h1>Create HH React App</h1>
             <Logo />
             <input type="text" onChange={({ target: { value } }) => setValue(value)} value={value} />
             Input value: {value}

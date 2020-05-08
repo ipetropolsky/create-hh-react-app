@@ -9,6 +9,7 @@
   "scripts": {
     "postinstall": "ln -sf `pwd`/githooks/* .git/hooks || true",
     "build": "webpack --config webpack.config.js",
+    "analyze": "ANALYZE_BUNDLE=true yarn build",
     "dev": "NODE_ENV=development webpack-dev-server --config webpack.config.js"
   },
   "devDependencies": {
@@ -23,12 +24,13 @@
     "@babel/preset-react": "7.6.3",
     "@hh.ru/babel-plugin-insert-pathname": "1.0.0",
     "@hh.ru/babel-plugin-react-displayname": "0.5.2",
+    "@hh.ru/babel-plugin-react-source": "0.1.1",
     "@hh.ru/eslint-config": "7.0.1",
     "@hh.ru/stylelint-config-hh": "3.0.0",
     "@hot-loader/react-dom": "16.13.0",
+    "babel-eslint": "10.0.3",
     "babel-loader": "8.0.6",
     "clean-webpack-plugin": "3.0.0",
-    "copy-webpack-plugin": "5.0.4",
     "css-loader": "3.2.0",
     "cssnano": "4.1.10",
     "eslint": "6.6.0",
@@ -41,7 +43,6 @@
     "extract-css-chunks-webpack-plugin": "4.7.4",
     "file-loader": "4.2.0",
     "html-webpack-plugin": "3.2.0",
-    "ignore-loader": "0.1.2",
     "less": "3.10.3",
     "less-loader": "5.0.0",
     "lint-staged": "9.4.2",
@@ -66,7 +67,6 @@
   },
   "dependencies": {
     "@babel/runtime": "7.6.3",
-    "babel-eslint": "10.0.3",
     "core-js": "3.3.4",
     "react": "16.13.0",
     "react-dom": "16.13.0"

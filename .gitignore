@@ -10,3 +10,4 @@ yarn-error.log*
 .eslintcache
 .yarn-integrity
 .env
+bundleAnalyzer.html

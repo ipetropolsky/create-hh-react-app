@@ -1,3 +1,5 @@
+const isDevelopment = process.env.NODE_ENV === 'development';
+
 module.exports = {
     plugins: [
         '@babel/plugin-proposal-class-properties',
@@ -12,8 +14,7 @@ module.exports = {
                 useESModules: true,
             },
         ],
-        'react-hot-loader/babel',
-    ],
+    ].concat(isDevelopment ? ['@hh.ru/babel-plugin-react-source', 'react-hot-loader/babel'] : []),
     presets: [
         [
             '@babel/preset-env',
