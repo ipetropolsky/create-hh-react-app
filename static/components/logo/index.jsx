@@ -4,7 +4,7 @@ import 'static/components/logo/logo.less';
 import 'static/components/link/link.less';
 
 const Logo = () => (
-    <a href="/foo.html" className="link">
+    <a href="/standalone.html" className="link">
         <span className="logo"></span>
     </a>
 );

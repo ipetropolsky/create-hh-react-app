@@ -16,7 +16,7 @@ const useHMR = true;
 module.exports = {
     entry: {
         index: path.join(staticPath, 'index.jsx'),
-        foo: path.join(staticPath, 'foo.jsx'),
+        standalone: path.join(staticPath, 'standalone.jsx'),
     },
     output: {
         path: buildPath,
@@ -122,8 +122,8 @@ module.exports = {
         }),
         new HtmlWebpackPlugin({
             title: 'HH React Foo',
-            chunks: ['foo'],
-            filename: 'foo.html',
+            chunks: ['standalone'],
+            filename: 'standalone.html',
         }),
         new ExtractCssChunksPlugin({
             filename: isProduction ? '[name].[contenthash:8].css' : '[name].css',

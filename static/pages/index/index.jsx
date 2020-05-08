@@ -14,10 +14,10 @@ const IndexPage = () => {
             <h1>Index page</h1>
             <Logo />
             <input type="text" onChange={({ target: { value } }) => setValue(value)} value={value} />
-            Input: {value}
+            Input value: {value}
             <p>
-                <a className="link" href="/foo.html">
-                    Go to Foo page
+                <a className="link" href="/standalone.html">
+                    Go to standalone page
                 </a>
             </p>
         </>
