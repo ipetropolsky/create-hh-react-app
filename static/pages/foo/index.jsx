@@ -1,7 +1,8 @@
 import React from 'react';
 import { hot } from 'react-hot-loader/root';
 
-import 'static/styles/foo.less';
+import 'static/pages/foo/index.less';
+import 'static/components/link/link.less';
 
 const FooPage = () => (
     <>

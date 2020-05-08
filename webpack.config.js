@@ -96,7 +96,7 @@ module.exports = {
                             plugins: [
                                 { removeTitle: true },
                                 { convertColors: { shorthex: false } },
-                                { convertPathData: true },
+                                { convertPathData: false },
                             ],
                         },
                     },

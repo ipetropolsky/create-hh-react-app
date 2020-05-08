@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { hot } from 'react-hot-loader/root';
 
-import 'static/styles/index.less';
+import 'static/pages/index/index.less';
+import 'static/components/link/link.less';
 
-import Logo from 'static/components/Logo';
+import Logo from 'static/components/logo';
 
 const IndexPage = () => {
     const [value, setValue] = useState('');
