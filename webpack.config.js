@@ -96,26 +96,8 @@ module.exports = {
                             plugins: [
                                 { removeTitle: true },
                                 { convertColors: { shorthex: false } },
-                                { convertPathData: false },
+                                { convertPathData: true },
                             ],
-                        },
-                    },
-                ],
-            },
-            {
-                test: /\.html$/i,
-                use: [
-                    {
-                        loader: 'file-loader',
-                        options: {
-                            name: '[name].[ext]',
-                        },
-                    },
-                    'extract-loader',
-                    {
-                        loader: 'html-loader',
-                        options: {
-                            attrs: [':src', 'link:href'],
                         },
                     },
                 ],
