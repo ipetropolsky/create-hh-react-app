@@ -1,7 +1,7 @@
 import React from 'react';
 import { hot } from 'react-hot-loader/root';
 
-import 'static/pages/standalone/index.less';
+import 'static/globals/defaults.less';
 import 'static/components/link/link.less';
 
 const StandalonePage = () => (

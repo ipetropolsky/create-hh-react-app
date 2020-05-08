@@ -167,11 +167,12 @@ module.exports = {
     devServer: {
         contentBase: buildPath,
         compress: true,
-        port: 9000,
+        port: 9001,
         open: false,
         overlay: true,
         hot: useHMR,
         hotOnly: useHMR,
         liveReload: !useHMR,
+        writeToDisk: true,
     },
 };
