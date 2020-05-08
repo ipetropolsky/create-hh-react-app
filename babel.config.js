@@ -12,6 +12,7 @@ module.exports = {
                 useESModules: true,
             },
         ],
+        'react-hot-loader/babel',
     ],
     presets: [
         [

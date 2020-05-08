@@ -3,7 +3,7 @@ const TerserPlugin = require('terser-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ExtractCssChunksPlugin = require('extract-css-chunks-webpack-plugin');
 const postcssPresetEnv = require('postcss-preset-env');
 const cssNano = require('cssnano');
 
@@ -11,24 +11,28 @@ const isProduction = process.env.NODE_ENV !== 'development';
 const staticPath = path.resolve(__dirname, 'static');
 const buildPath = path.resolve(__dirname, 'build');
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
+const useHMR = true;
 
 module.exports = {
     entry: {
-        index: path.join(staticPath, 'index.js'),
+        index: path.join(staticPath, 'index.jsx'),
+        foo: path.join(staticPath, 'foo.jsx'),
     },
     output: {
         path: buildPath,
-        filename: '[name].[chunkhash:8].js',
+        filename: isProduction ? '[name].[chunkhash:8].js' : '[name].[hash:8].js',
     },
     resolve: {
         modules: [staticPath, nodeModulesPath],
         extensions: ['.js', '.jsx', '.less'],
         alias: {
             static: staticPath,
+            'react-dom': !isProduction && useHMR ? '@hot-loader/react-dom' : 'react-dom',
         },
+        symlinks: false,
     },
     mode: isProduction ? 'production' : 'development',
-    // 'eval-source-map' не работает для CSS через MiniCssExtractPlugin
+    // 'eval-source-map' не работает для CSS через ExtractCssChunksPlugin
     devtool: 'source-map',
     watch: !isProduction,
     watchOptions: {
@@ -41,14 +45,20 @@ module.exports = {
                 exclude: [nodeModulesPath],
                 use: {
                     loader: 'babel-loader',
+                    options: {
+                        cacheDirectory: true,
+                    },
                 },
             },
             {
                 test: /\.less$/,
                 exclude: [nodeModulesPath],
                 use: [
-                    { loader: MiniCssExtractPlugin.loader, options: { sourceMap: true } },
-                    { loader: 'css-loader', options: { sourceMap: true } },
+                    {
+                        loader: ExtractCssChunksPlugin.loader,
+                        options: { sourceMap: true, hmr: !isProduction && useHMR },
+                    },
+                    { loader: 'css-loader', options: { sourceMap: true, importLoaders: 2 } },
                     {
                         loader: 'postcss-loader',
                         options: {
@@ -66,7 +76,7 @@ module.exports = {
                     loader: 'file-loader',
                     options: {
                         outputPath: 'img',
-                        name: '[name].[hash:8].[ext]',
+                        name: '[name].[contenthash:8].[ext]',
                     },
                 },
             },
@@ -77,7 +87,7 @@ module.exports = {
                         loader: 'file-loader',
                         options: {
                             outputPath: 'img',
-                            name: '[name].[hash:8].[ext]',
+                            name: '[name].[contenthash:8].[ext]',
                         },
                     },
                     {
@@ -88,6 +98,24 @@ module.exports = {
                                 { convertColors: { shorthex: false } },
                                 { convertPathData: false },
                             ],
+                        },
+                    },
+                ],
+            },
+            {
+                test: /\.html$/i,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            name: '[name].[ext]',
+                        },
+                    },
+                    'extract-loader',
+                    {
+                        loader: 'html-loader',
+                        options: {
+                            attrs: [':src', 'link:href'],
                         },
                     },
                 ],
@@ -108,10 +136,16 @@ module.exports = {
         new CleanWebpackPlugin(),
         new HtmlWebpackPlugin({
             title: 'HH React App',
+            chunks: ['index'],
         }),
-        new MiniCssExtractPlugin({
-            filename: '[name].[hash:8].css',
-            chunkFilename: '[id].[hash:8].css',
+        new HtmlWebpackPlugin({
+            title: 'HH React Foo',
+            chunks: ['foo'],
+            filename: 'foo.html',
+        }),
+        new ExtractCssChunksPlugin({
+            filename: isProduction ? '[name].[contenthash:8].css' : '[name].css',
+            chunkFilename: isProduction ? '[id].[contenthash:8].css' : '[id].css',
         }),
         ...(isProduction
             ? []
@@ -125,7 +159,23 @@ module.exports = {
               ]),
     ],
     stats: {
-        maxModules: 100,
-        children: false,
+        entrypoints: false,
+        chunks: false,
+        errorDetails: true,
+        modules: false,
+        performance: false,
+        env: true,
+        colors: true,
+    },
+    devServer: {
+        contentBase: buildPath,
+        compress: true,
+        port: 9000,
+        open: false,
+        overlay: true,
+        hot: useHMR,
+        hotOnly: useHMR,
+        liveReload: !useHMR,
+        // quiet: true,
     },
 };
