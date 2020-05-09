@@ -4,13 +4,17 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 const ExtractCssChunksPlugin = require('extract-css-chunks-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const postcssPresetEnv = require('postcss-preset-env');
 const cssNano = require('cssnano');
 
-const isDevelopment = process.env.NODE_ENV === 'development';
-const isProduction = !isDevelopment;
+const { isDevelopment, isProduction, publicPath, useHMR } = require('./config');
+
 const staticPath = path.resolve(__dirname, 'static');
+const rootPath = path.join(staticPath, 'public');
 const buildPath = path.resolve(__dirname, 'build');
+const buildStaticDir = 'static';
+const buildImageDir = path.join(buildStaticDir, 'img');
 const nodeModulesPath = path.resolve(__dirname, 'node_modules');
 const bundleAnalyzer = {
     enabled: !!process.env.ANALYZE_BUNDLE,
@@ -22,23 +26,23 @@ const bundleAnalyzer = {
         defaultSizes: 'parsed',
     },
 };
-const useHMR = isDevelopment;
 
 module.exports = {
-    context: staticPath,
     entry: {
         index: path.join(staticPath, 'index.jsx'),
         standalone: path.join(staticPath, 'standalone.jsx'),
     },
     output: {
         path: buildPath,
-        filename: isProduction ? '[name].[chunkhash:8].js' : '[name].[hash:8].js',
+        filename: path.join(buildStaticDir, isProduction ? '[name].[chunkhash:8].js' : '[name].[hash:8].js'),
+        publicPath,
     },
     resolve: {
         modules: [staticPath, nodeModulesPath],
         extensions: ['.js', '.jsx', '.less'],
         alias: {
             static: staticPath,
+            config: path.resolve(__dirname, 'config'),
             'react-dom': useHMR ? '@hot-loader/react-dom' : 'react-dom',
         },
         symlinks: false,
@@ -68,7 +72,7 @@ module.exports = {
                 use: [
                     {
                         loader: ExtractCssChunksPlugin.loader,
-                        options: { sourceMap: true, hmr: useHMR },
+                        options: { publicPath, sourceMap: true, hmr: useHMR },
                     },
                     { loader: 'css-loader', options: { sourceMap: true, importLoaders: 2 } },
                     {
@@ -87,7 +91,7 @@ module.exports = {
                 use: {
                     loader: 'file-loader',
                     options: {
-                        outputPath: 'img',
+                        outputPath: buildImageDir,
                         name: '[name].[contenthash:8].[ext]',
                     },
                 },
@@ -98,7 +102,7 @@ module.exports = {
                     {
                         loader: 'file-loader',
                         options: {
-                            outputPath: 'img',
+                            outputPath: buildImageDir,
                             name: '[name].[contenthash:8].[ext]',
                         },
                     },
@@ -143,16 +147,18 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: 'Main page',
             chunks: ['vendors', 'index'],
+            filename: path.join(buildPath, 'index.html'),
         }),
         new HtmlWebpackPlugin({
             title: 'Standalone page',
             chunks: ['vendors', 'standalone'],
-            filename: 'standalone.html',
+            filename: path.join(buildPath, 'standalone.html'),
         }),
         new ExtractCssChunksPlugin({
-            filename: isProduction ? '[name].[contenthash:8].css' : '[name].css',
-            chunkFilename: isProduction ? '[id].[contenthash:8].css' : '[id].css',
+            filename: path.join(buildStaticDir, isProduction ? '[name].[contenthash:8].css' : '[name].css'),
+            chunkFilename: path.join(buildStaticDir, isProduction ? '[id].[contenthash:8].css' : '[id].css'),
         }),
+        new CopyPlugin([{ from: `${rootPath}/**/*`, to: buildPath, context: rootPath }]),
         ...(bundleAnalyzer.enabled ? [new BundleAnalyzerPlugin(bundleAnalyzer.options)] : []),
     ],
     stats: {
@@ -173,6 +179,5 @@ module.exports = {
         hot: useHMR,
         hotOnly: useHMR,
         liveReload: !useHMR,
-        writeToDisk: true,
     },
 };

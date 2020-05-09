@@ -2,15 +2,16 @@ import React from 'react';
 import { hot } from 'react-hot-loader/root';
 
 import 'static/globals/defaults.less';
-import 'static/components/link/link.less';
+
+import Link from 'static/components/link';
+
+import { useHMR } from 'config';
 
 const StandalonePage = () => (
     <>
         <h1>Standalone page</h1>
-        <a className="link" href="/">
-            Back to index
-        </a>
+        <Link href="/">Back to index!</Link>
     </>
 );
 
-export default hot(StandalonePage);
+export default useHMR ? hot(StandalonePage) : StandalonePage;

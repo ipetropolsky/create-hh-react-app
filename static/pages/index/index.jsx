@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { hot } from 'react-hot-loader/root';
 
 import 'static/globals/defaults.less';
-import 'static/components/link/link.less';
 
+import { useHMR } from 'config';
+import Link from 'static/components/link';
 import Logo from 'static/components/logo';
 
 const IndexPage = () => {
@@ -16,12 +17,10 @@ const IndexPage = () => {
             <input type="text" onChange={({ target: { value } }) => setValue(value)} value={value} /> Input value:{' '}
             {value}
             <p>
-                <a className="link" href="/standalone.html">
-                    Go to standalone page
-                </a>
+                <Link href="/standalone.html">Go to standalone page</Link>
             </p>
         </>
     );
 };
 
-export default hot(IndexPage);
+export default useHMR ? hot(IndexPage) : IndexPage;

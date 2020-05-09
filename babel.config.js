@@ -1,4 +1,4 @@
-const isDevelopment = process.env.NODE_ENV === 'development';
+const { isDevelopment, useHMR } = require('./config');
 
 module.exports = {
     plugins: [
@@ -14,7 +14,9 @@ module.exports = {
                 useESModules: true,
             },
         ],
-    ].concat(isDevelopment ? ['@hh.ru/babel-plugin-react-source', 'react-hot-loader/babel'] : []),
+    ]
+        .concat(isDevelopment ? ['@hh.ru/babel-plugin-react-source'] : [])
+        .concat(useHMR ? ['react-hot-loader/babel'] : []),
     presets: [
         [
             '@babel/preset-env',
